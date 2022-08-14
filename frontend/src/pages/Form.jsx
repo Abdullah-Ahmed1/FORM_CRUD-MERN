@@ -22,15 +22,25 @@ const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
 
-const DefaultForm = () => {
+const DefaultForm = ({data}) => {
   const [componentDisabled, setComponentDisabled] = useState(false);
   const [image,setImage]  =useState("");
   const [top, setTop] = useState(1);
 
+console.log("--------------------------------",data)
+
   const onFormLayoutChange = ({ disabled }) => {
     setComponentDisabled(disabled);
   };
-
+const intials = {
+  firstname: data.firstname,
+  lastname: data.lastname,
+  profession:data.profession,
+  gender:data.gender,
+  height: data.height,
+  // dob:data.dob
+  image: data.image
+}
 
   const upload  =async (file)=>{
     console.log(file)
@@ -83,13 +93,15 @@ const dummyRequest = ({ file, onSuccess }) => {
       <Form
          labelCol={{ span: 8 }}
          wrapperCol={{ span: 8 }}  
+        initialValues={intials}
         onFinish={submitHandler}
         sx = {{border:"2px solid black"}}
+       
       >
        
         
-        <Form.Item label="First Name"  name="firstname" >
-          <Input            type="text"
+        <Form.Item label="First Name"     name="firstname" >
+          <Input           type="text"
           placeholder="First Name" />
         </Form.Item>
         <Form.Item label="Last Name"  name="lastname" >
@@ -119,8 +131,8 @@ const dummyRequest = ({ file, onSuccess }) => {
         </Form.Item>
         
 
-        <Form.Item label="Upload" valuePropName="fileList">
-          <Upload   customRequest={dummyRequest} listType="picture-card"  onChange={(e)=>{upload(e)}} >
+        <Form.Item label="Upload"    valuePropName="fileList">
+          <Upload   customRequest={dummyRequest} listType="picture-card"   defaultFileList={} onChange={(e)=>{upload(e)}} >
             <div>
               <PlusOutlined />
               <div

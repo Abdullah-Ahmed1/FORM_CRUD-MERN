@@ -5,8 +5,10 @@ import { EditOutlined, EllipsisOutlined, SettingOutlined ,DeleteOutlined} from '
 import { Avatar, Card,Affix, Button } from 'antd';
 
 const { Meta } = Card;
-const User = ()=>{
-const [data,setData] = useState([]);
+
+const User = ({handleUpdate})=>{
+
+  const [data,setData] = useState([]);
 const [top, setTop] = useState(1);
 
 
@@ -49,7 +51,7 @@ const [top, setTop] = useState(1);
                               }
                               actions={[
                                 <DeleteOutlined ket = "delete"   onClick={()=>handleDelete(item._id)} />,
-                                <EditOutlined key="edit" />,
+                                <EditOutlined key="edit"    onClick={()=>handleUpdate(item)}   />,
                                 <EllipsisOutlined key="ellipsis" />,
                               ]}
                             >
