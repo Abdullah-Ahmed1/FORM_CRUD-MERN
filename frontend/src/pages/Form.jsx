@@ -132,7 +132,7 @@ const dummyRequest = ({ file, onSuccess }) => {
         
 
         <Form.Item label="Upload"    valuePropName="fileList">
-          <Upload   customRequest={dummyRequest} listType="picture-card"   defaultFileList={} onChange={(e)=>{upload(e)}} >
+          <Upload   customRequest={dummyRequest} listType="picture-card"    onChange={(e)=>{upload(e)}} >
             <div>
               <PlusOutlined />
               <div
