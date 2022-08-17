@@ -38,6 +38,38 @@ app.delete("/delete/:id", async (req, res) => {
   const id = req.params.id;
   const element = await form.findOneAndDelete({ _id: id });
 });
+/////////////////////////////////// update ///////////////////////////////////////////////////////////
+
+app.post("/update/:id", async (req, res) => {
+  await form.findByIdAndUpdate(req.params.id, req.body, (err, res) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("Updated User : ", res);
+    }
+  });
+});
+
+///////////////////////////////////// Search  ///////////////////////////////////////////////////////////
+
+app.get("/search/:data", async (req, res) => {
+  console.log(req.params.data);
+  const keyword = req.params.data;
+  // let reg = new RegExp("/" + keyword + "/i", "g");
+  const records = await form.find({
+    $or: [
+      { firstname: { $regex: `${keyword}`, $options: "i" } },
+      { lastname: { $regex: `${keyword}`, $options: "i" } },
+      { profession: { $regex: `${keyword}`, $options: "i" } },
+      { gender: { $regex: `${keyword}`, $options: "i" } },
+    ],
+  });
+
+  console.log("-----", records);
+  // if (records.length === 0) return res.json(null);
+  res.json(records);
+  // console.log("------", records);
+});
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(8081, () => {

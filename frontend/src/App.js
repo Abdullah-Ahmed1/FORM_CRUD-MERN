@@ -7,7 +7,7 @@ import User from "./pages/User";
 
 function App() {
   let navigate = useNavigate();
-  const [data, setData] = useState({});
+  const [data, setData] = useState({ nodata: true });
 
   const handleUpdate = (data) => {
     setData(data);

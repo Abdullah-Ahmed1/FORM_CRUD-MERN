@@ -2,7 +2,8 @@ import { useEffect,useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { EditOutlined, EllipsisOutlined, SettingOutlined ,DeleteOutlined} from '@ant-design/icons';
-import { Avatar, Card,Affix, Button } from 'antd';
+import { Avatar, Card,Affix, Button,Input,Space } from 'antd';
+const { Search } = Input;
 
 const { Meta } = Card;
 
@@ -11,11 +12,19 @@ const User = ({handleUpdate})=>{
   const [data,setData] = useState([]);
 const [top, setTop] = useState(1);
 
-
+const onSearch = (value) => console.log(value);
     const handleDelete = async(id)=>{
         console.log(id)
        setData(data.filter(item=>item._id !==id))
        const users =  await axios.delete(`http://127.0.0.1:8081/delete/${id}`) 
+    }
+
+
+    const search= async(e)=>{
+      const data = await axios.get( `http://127.0.0.1:8081/search/${e.target.value}`)
+      console.log("search",data.data)
+
+      setData(data.data)
     }
 
     useEffect(()=>{
@@ -37,8 +46,21 @@ const [top, setTop] = useState(1);
         </Button>
         </Link>
       </Affix>
+      <div  style={{position:"absolute",top:"10px",left:"135px"}} >
+      <Search
+      placeholder="input search text"
+      allowClear
+      enterButton="Search"
+      size="large"
+      onChange={search}
+      onSearch={onSearch}
+    />
+      </div>
             
-            {data.map((item)=>{
+            {
+            data.length ===0 ? "no data to show" : 
+      
+            data.map((item)=>{
                 return(
                               <Card key={item._id}
                               style={{ width: 300 ,margin:"10px" }}
@@ -46,7 +68,7 @@ const [top, setTop] = useState(1);
                                 <img
                                   alt="example"
                                   src={item.image}
-                                  style={{maxHeight:300, maxWidth:"200"}}
+                                  style={{maxHeight:300,minHeight:300, maxWidth:"200"}}
                                 />
                               }
                               actions={[
@@ -64,7 +86,7 @@ const [top, setTop] = useState(1);
                             )
             
             })}
-  
+          
         </div>
     )
 }

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
 import "antd/dist/antd.css";
+import moment from "moment";
 import axios from "axios"
 import { Affix } from 'antd';
 import { PlusOutlined } from "@ant-design/icons";
@@ -18,37 +19,55 @@ import {
   Checkbox,
   Upload
 } from "antd";
-const { RangePicker } = DatePicker;
+//const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
-
 const DefaultForm = ({data}) => {
+  const [form] = Form.useForm();
   const [componentDisabled, setComponentDisabled] = useState(false);
   const [image,setImage]  =useState("");
   const [top, setTop] = useState(1);
+  const [isEdit,setIsEdit] =useState(false) 
 
 console.log("--------------------------------",data)
 
   const onFormLayoutChange = ({ disabled }) => {
     setComponentDisabled(disabled);
   };
-const intials = {
-  firstname: data.firstname,
-  lastname: data.lastname,
-  profession:data.profession,
-  gender:data.gender,
-  height: data.height,
-  // dob:data.dob
-  image: data.image
+
+
+useEffect(()=>{
+  console.log("///////////",data)
+  if(data.nodata){
+    console.log("happy")
+  }else{
+
+    setIsEdit(true);
+  const initials = {
+    firstname: data.firstname,
+    lastname: data.lastname,
+    profession:data.profession,
+    gender:data.gender,
+    height: data.height,
+    dob:moment(data.dob),
+    image: [{uid: data.id, url : data.image}]
+  }
+  form.setFieldsValue(initials)
+
+
 }
+
+  
+ // console.log("--------------------",form.values)
+},[data])
 
   const upload  =async (file)=>{
     console.log(file)
-    if (file.file.status === "done"){
+    if (file.fileList.status === "done"){
         console.log("file")
     
         const body = new FormData();
-         body.append('file', file.file.originFileObj);
+         body.append('file', file.fileList.originFileObj);
          body.append('upload_preset',"my-uploads")
      
          const res = await fetch('https://api.cloudinary.com/v1_1/dlgwvuu5d/image/upload', { method: 'POST', body }).then(r=>r.json());
@@ -71,13 +90,25 @@ const dummyRequest = ({ file, onSuccess }) => {
       const data = values;
       data.image=image
       console.log(data)
-
-      axios.post('http://127.0.0.1:8081/add',data)
+      
+      if(isEdit){
+        console.log("Edit")
+        axios.post(`http://127.0.0.1:8081/update/${data._id}`,data)
+        .then((res)=>{
+          console.log(res);
+        }).catch((err)=>{
+          console.log(err)
+        })
+      }else{
+        console.log("add")
+        axios.post('http://127.0.0.1:8081/add',data)
       .then((res)=>{
         console.log(res);
       }).catch((err)=>{
         console.log(err)
       })
+      }
+      
     }
 
   return (
@@ -90,12 +121,13 @@ const dummyRequest = ({ file, onSuccess }) => {
         </Button>
         </Link>
       </Affix>
+      <div style ={{border:"2px solid black"}}>
       <Form
          labelCol={{ span: 8 }}
          wrapperCol={{ span: 8 }}  
-        initialValues={intials}
+         form={form}
         onFinish={submitHandler}
-        sx = {{border:"2px solid black"}}
+        className = {{backgroundColor:"black"}}
        
       >
        
@@ -131,8 +163,8 @@ const dummyRequest = ({ file, onSuccess }) => {
         </Form.Item>
         
 
-        <Form.Item label="Upload"    valuePropName="fileList">
-          <Upload   customRequest={dummyRequest} listType="picture-card"    onChange={(e)=>{upload(e)}} >
+        <Form.Item label="Upload"   valuePropName="fileList">
+          <Upload    listType="picture-card"    >
             <div>
               <PlusOutlined />
               <div
@@ -148,7 +180,17 @@ const dummyRequest = ({ file, onSuccess }) => {
         <Form.Item  style={{display:"flex",justifyContent:"center",alignItems:"center"}} >
           <Button style={{with:"100px"}}  type="primary"  htmlType="submit">Submit</Button>
         </Form.Item>
+
+        <Form.Item   style={{}}  label= "upload image" name="image"  valuePropName="fileList">
+          <Upload  customRequest={dummyRequest} listType="picture" style={{width:"10px"}}
+            onChange={(e)=>upload(e)} 
+          
+          >
+            <Button>upload</Button>
+          </Upload>
+        </Form.Item>
       </Form>
+      </div>
     </div>
   );
 };
