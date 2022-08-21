@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 var formSchema = new mongoose.Schema({
   firstname: {
     type: String,
@@ -23,4 +24,19 @@ var formSchema = new mongoose.Schema({
     type: String,
   },
 });
+
+formSchema.set("toObject", { virtuals: true });
+formSchema.set("toJSON", { virtuals: true });
+
+formSchema
+  .virtual("fullname")
+  .get(function () {
+    return this.firstname + " " + this.lastname;
+  })
+  .set(function (newName) {
+    var nameParts = newName.split(" ");
+    this.firstname = nameParts[0];
+    this.lastname = nameParts[1];
+  });
+
 mongoose.model("Forms", formSchema);

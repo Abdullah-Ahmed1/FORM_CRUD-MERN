@@ -5,7 +5,7 @@ require("./connection/connection");
 const Mongoose = require("mongoose");
 const form = Mongoose.model("Forms");
 const bodyParser = require("body-parser"); //Used for parsing request body
-app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cors());
 
@@ -17,6 +17,7 @@ app.post("/add", (req, res) => {
     .create(req.body)
     .then((res) => {
       console.log("created", res);
+      res.toJSON().fullname;
     })
     .catch((err) => {
       console.log(err);
@@ -54,19 +55,30 @@ app.post("/update/:id", async (req, res) => {
 
 app.get("/search/:data", async (req, res) => {
   console.log(req.params.data);
-  const keyword = req.params.data;
+  const keyword = req.params.data.split(" ");
+  console.log(keyword);
   // let reg = new RegExp("/" + keyword + "/i", "g");
+
   const records = await form.find({
     $or: [
-      { firstname: { $regex: `${keyword}`, $options: "i" } },
-      { lastname: { $regex: `${keyword}`, $options: "i" } },
-      { profession: { $regex: `${keyword}`, $options: "i" } },
-      { gender: { $regex: `${keyword}`, $options: "i" } },
+      // {
+      //   $and: [
+      //     { firstname: { $regex: `${keyword[0]}`, $options: "i" } },
+      //     { lastname: { $regex: `${keyword[1]}`, $options: "i" } },
+      //   ],
+      // },
+      { firstname: { $regex: `${keyword[0]}`, $options: "i" } },
+
+      { lastname: { $regex: `${keyword[0]}`, $options: "i" } },
+      { lastname: { $regex: `${keyword[1]}`, $options: "i" } },
+      { profession: { $regex: `${keyword[0]}`, $options: "i" } },
+      { gender: { $regex: `^${keyword[0]}`, $options: "i" } },
     ],
   });
+  //  console.log(keyword == records[0].fullname);
 
-  console.log("-----", records);
-  // if (records.length === 0) return res.json(null);
+  // //console.log("-----", records.toObject({ virtuals: true }));
+  // // if (records.length === 0) return res.json(null);
   res.json(records);
   // console.log("------", records);
 });
