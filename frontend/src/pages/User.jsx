@@ -10,9 +10,10 @@ const { Meta } = Card;
 const User = ({handleUpdate})=>{
 
   const [data,setData] = useState([]);
+  const [allData,setAllData]=  useState([]);
 const [top, setTop] = useState(1);
 
-const onSearch = (value) => console.log(value);
+//const onSearch = (value) => console.log(value);
     const handleDelete = async(id)=>{
         console.log(id)
        setData(data.filter(item=>item._id !==id))
@@ -20,21 +21,28 @@ const onSearch = (value) => console.log(value);
     }
 
 
-    const search= async(e)=>{
-      const data = await axios.get( `http://127.0.0.1:8081/search/${e.target.value}`)
-      console.log("search",data.data)
+    const search= (e)=>{
+     axios.get( `http://127.0.0.1:8081/search/${e.target.value}`).then(res=>{
+        setData(res.data)
+    }).catch((e)=>{
+        setData(allData)
+    })
+    //  console.log("search",data.data)
 
-      setData(data.data)
+     // setData(data.data)
     }
 
     useEffect(()=>{
-        
-        async function data(){
-        const users =  await axios.get('http://127.0.0.1:8081/all') 
-        console.log(users.data)
-        setData(users.data)  
-        }
-        data() 
+        console.log("---")
+        // async function data(){
+         axios.get('http://127.0.0.1:8081/all') .then((res)=>{
+          console.log(res.data)
+          setData(res.data)
+          setAllData(res.data);
+        })
+       
+
+        // }
     },[])
     return(
         <div style={{backgroundColor:"grey",flexWrap:"wrap",display:"flex",padding:"10px",flexDirection:"row",alignItems:"center",justifyContent:"center"}} >
@@ -53,7 +61,7 @@ const onSearch = (value) => console.log(value);
       enterButton="Search"
       size="large"
       onChange={search}
-      onSearch={onSearch}
+      
     />
       </div>
             

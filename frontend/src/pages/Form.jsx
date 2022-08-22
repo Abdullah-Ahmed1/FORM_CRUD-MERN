@@ -127,20 +127,66 @@ const dummyRequest = ({ file, onSuccess }) => {
          wrapperCol={{ span: 8 }}  
          form={form}
         onFinish={submitHandler}
+        onFinishFailed={(error) => {
+          console.log({ error });
+        }}
         className = {{backgroundColor:"black"}}
        
       >
        
         
-        <Form.Item label="First Name"     name="firstname" >
+        <Form.Item label="First Name"     name="firstname"
+           rules={[
+            {
+              required: true,
+              message: "Please enter your name",
+            },
+            { whitespace: false ,
+            
+            },
+            { min: 3 },
+            ()=>({
+              validator(_,value){
+                if (!isNaN(value)) {
+                  return Promise.reject("name should not contain digit");
+                }
+                return Promise.resolve();
+              }
+            })
+          ]}
+          hasFeedback
+        >
           <Input           type="text"
           placeholder="First Name" />
         </Form.Item>
-        <Form.Item label="Last Name"  name="lastname" >
+        <Form.Item 
+        label="Last Name"  name="lastname" 
+        rules={[
+          {
+            required: true,
+            message: "Please enter your last name",
+          },
+          { whitespace: false ,
+          
+          },
+          { min: 3 },
+        ]}
+        hasFeedback
+
+        >
           <Input            type="text"
           placeholder="Last Name" />
         </Form.Item>
-        <Form.Item label="Profession" name="profession" >
+        <Form.Item label="Profession" name="profession"
+        rules={[
+          {
+            required: true,
+            message: "Please provide your date of birth",
+          },
+        ]}
+        hasFeedback
+        
+        >
           <Select>
             <Select.Option value="comedian">comedian</Select.Option>
             <Select.Option value="actor">actor</Select.Option>
@@ -148,14 +194,39 @@ const dummyRequest = ({ file, onSuccess }) => {
             <Select.Option value="other">other</Select.Option>
           </Select>
         </Form.Item>
-        <Form.Item label="D.O.B"  name="dob">
+        <Form.Item label="D.O.B"  name="dob"
+        
+        rules={[
+          {
+            required: true,
+            message: "Please provide your date of birth",
+          },
+        ]}
+        hasFeedback
+        >
           <DatePicker />
         </Form.Item>
         
-        <Form.Item label="Height"  name="height" >
+        <Form.Item label="Height"  name="height"
+         rules={[
+          {
+            required: true,
+            message: "Please enter your height",
+          }
+        ]}
+        hasFeedback
+        >
           <InputNumber />
         </Form.Item>
-        <Form.Item label="Gender"  name="gender" >
+        <Form.Item label="Gender" 
+        
+        rules={[
+          {
+            required: true,
+            message: "Please select an option",
+          }
+        ]}
+        name="gender" >
           <Radio.Group>
             <Radio value="male">male </Radio>
             <Radio value="female">female </Radio>
